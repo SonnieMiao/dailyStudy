@@ -63,40 +63,32 @@ class Ph extends Thread {
 
     @Override
     public void run() {
-        logger.debug("Thread {} started.", super.getName());
-
-        if (left.tryLock()) {
-            try {
-                logger.debug("Thread {} acquired left lock.", super.getName());
-                if (right.tryLock()) {
-                    try {
-                        logger.debug("Thread {} acquired right lock.", super.getName());
-                        eat();
-                    } finally {
-                        right.unlock();
-                        logger.debug("Thread {} released right lock.", super.getName());
+        while (true) {
+            if (left.tryLock()) {
+                try {
+                    if (right.tryLock()) {
+                        try {
+                            eat();
+                        } finally {
+                            right.unlock();
+                        }
+                    } else {
                     }
-                } else {
-                    logger.debug("Thread {} failed to acquire right lock.", super.getName());
+                } finally {
+                    left.unlock();
                 }
-            } finally {
-                left.unlock();
-                logger.debug("Thread {} released left lock.", super.getName());
+            } else {
             }
-        } else {
-            logger.debug("Thread {} failed to acquire left lock.", super.getName());
         }
     }
 
 
     private void eat() {
-        while (true) {
-            logger.info(super.getName() + " eating...");
-            try {
-                Thread.sleep(new Random().nextInt(5) * 200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+        logger.info(super.getName() + " eating...");
+        try {
+            Thread.sleep(new Random().nextInt(5) * 1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }
