@@ -54,6 +54,7 @@ class Ph extends Thread {
     private Chop right;
 
     private static final Logger logger = LogManager.getLogger(Ph.class);
+
     public Ph(String name, Chop left, Chop right) {
         super(name);
         this.left = left;
@@ -66,19 +67,24 @@ class Ph extends Thread {
 
         if (left.tryLock()) {
             try {
-
+                logger.debug("Thread {} acquired left lock.", super.getName());
                 if (right.tryLock()) {
                     try {
+                        logger.debug("Thread {} acquired right lock.", super.getName());
                         eat();
                     } finally {
                         right.unlock();
+                        logger.debug("Thread {} released right lock.", super.getName());
                     }
                 } else {
+                    logger.debug("Thread {} failed to acquire right lock.", super.getName());
                 }
             } finally {
                 left.unlock();
+                logger.debug("Thread {} released left lock.", super.getName());
             }
         } else {
+            logger.debug("Thread {} failed to acquire left lock.", super.getName());
         }
     }
 
