@@ -93,7 +93,7 @@ class Ph extends Thread {
         while (true) {
             logger.info(super.getName() + " eating...");
             try {
-                Thread.sleep(new Random().nextInt(5) * 1000);
+                Thread.sleep(new Random().nextInt(5) * 200);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
