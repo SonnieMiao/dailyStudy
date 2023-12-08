@@ -21,23 +21,57 @@ public class TestSpecificSequence {
     public static void main(String[] args) {
         new Thread(() -> {
             synchronized (logger) {
-                while (toRun.equals("a") && time < 5) {
+                while (time < 5) {
+                    while (!toRun.equals("a")) {
+                        try {
+                            logger.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                     logger.debug("a");
                     toRun = "b";
                     time++;
-                }
-                try {
-                    logger.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    logger.notifyAll();
                 }
             }
         }).start();
-        new Thread(()->{
-            logger.debug("b");
+
+        new Thread(() -> {
+            synchronized (logger) {
+                while (time < 5) {
+                    while (!toRun.equals("b")) {
+                        try {
+                            logger.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    logger.debug("b");
+                    toRun = "c";
+                    logger.notifyAll();
+                }
+            }
         }).start();
-        new Thread(()->{
-            logger.debug("c");
+
+        new Thread(() -> {
+            synchronized (logger) {
+                while (time < 5) {
+                    while (!toRun.equals("c")) {
+                        try {
+                            logger.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    logger.debug("c");
+                    toRun = "a";
+                    logger.notifyAll();
+                }
+            }
         }).start();
     }
+}
+class waitNotify{
+
 }
