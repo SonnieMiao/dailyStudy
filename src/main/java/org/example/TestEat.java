@@ -61,7 +61,8 @@ class Ph extends Thread {
         this.right = right;
     }
 
-    @Override
+    //reentrantLock
+    /*@Override
     public void run() {
         while (true) {
             if (left.tryLock()) {
@@ -80,8 +81,18 @@ class Ph extends Thread {
             } else {
             }
         }
+    }*/
+    //dead lock
+    @Override
+    public void run() {
+        while (true) {
+            synchronized (left) {
+                synchronized (right) {
+                    eat();
+                }
+            }
+        }
     }
-
 
     private void eat() {
         logger.info(super.getName() + " eating...");
