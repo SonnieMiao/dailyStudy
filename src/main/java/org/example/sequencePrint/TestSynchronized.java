@@ -1,4 +1,4 @@
-package org.example;
+package org.example.sequencePrint;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,10 +13,10 @@ import org.apache.logging.log4j.Logger;
  * 修改时间：2023/12/8 19:04
  * 修改备注：
  */
-public class TestSpecificSequence {
+public class TestSynchronized {
     private static String toRun = "a";
     private static int time = 0;
-    private static final Logger logger = LogManager.getLogger(TestSpecificSequence.class);
+    private static final Logger logger = LogManager.getLogger(TestSynchronized.class);
 
     public static void main(String[] args) {
         new Thread(() -> {
