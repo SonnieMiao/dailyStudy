@@ -18,18 +18,8 @@ public class test {
         Monitor.getInstance().startMonitor();
         Monitor.getInstance().startMonitor();
         Monitor.getInstance().startMonitor();
-        Monitor.getInstance().startMonitor();
-        Monitor.getInstance().startMonitor();
-        Monitor.getInstance().startMonitor();
-        Monitor.getInstance().startMonitor();
-        Monitor.getInstance().startMonitor();
-        Monitor.getInstance().startMonitor();
-        Monitor.getInstance().startMonitor();
-        Monitor.getInstance().startMonitor();
-        Monitor.getInstance().startMonitor();
-        Monitor.getInstance().startMonitor();
         try {
-            Thread.sleep(5000);
+            Thread.sleep(2200);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -73,7 +63,7 @@ class Monitor {
             while (!end) {
                 logger.info("monitoring...---...");
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException ignore) {
                 }
             }
@@ -84,6 +74,7 @@ class Monitor {
 
     void stop() {
         end = true;
-        System.out.println(Thread.currentThread().getName());
+        monitorThread.interrupt();
+        logger.debug("interrupt ano");
     }
 }
