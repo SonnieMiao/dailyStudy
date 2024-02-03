@@ -61,13 +61,13 @@ class Monitor {
                 started = true;
             }
             while (!end) {
-                logger.info("monitoring...---...");
+                logger.info("monitoring");
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException ignore) {
                 }
             }
-            logger.debug("monitor exited ---...---");
+            logger.debug("monitor exited");
         },"ano");
         monitorThread.start();
     }

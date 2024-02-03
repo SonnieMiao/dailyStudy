@@ -1,9 +1,11 @@
 package org.example.atomic;
 
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -22,11 +24,37 @@ public class TestAccount {
         Account account2 = new SynchonizeAccount(100000);
         Account account3 = new LockAccount(100000);
         Account account4 = new AtomicAccount(100000);
+        Account account5 = new ReferenceAccount(new BigDecimal("100000"));
 
         Account.demo(account1);
         Account.demo(account2);
         Account.demo(account3);
         Account.demo(account4);
+        Account.demo(account5);
+    }
+}
+
+class ReferenceAccount implements Account {
+    private final AtomicReference<BigDecimal> balance;
+
+    public ReferenceAccount(BigDecimal balance) {
+        this.balance = new AtomicReference<>(balance);
+    }
+
+    @Override
+    public int getBalance() {
+        return balance.get().intValue();
+    }
+
+    @Override
+    public void withdraw(int amount) {
+        while (true) {
+            BigDecimal prev = balance.get();
+            BigDecimal aft = prev.subtract(new BigDecimal(amount));
+            if (balance.compareAndSet(prev, aft)) {
+                break;
+            }
+        }
     }
 }
 
@@ -44,13 +72,7 @@ class AtomicAccount implements Account {
 
     @Override
     public void withdraw(int amount) {
-        while (true) {
-            int pre = this.balance.get();
-            int aft = pre - amount;
-            if (this.balance.compareAndSet(pre, aft)) {
-                break;
-            }
-        }
+        balance.updateAndGet(balance -> balance - amount);
     }
 }
 
@@ -67,7 +89,7 @@ class LockAccount implements Account {
         lock.lock();
         try {
             return this.balance;
-        }finally {
+        } finally {
             lock.unlock();
         }
     }
@@ -77,11 +99,12 @@ class LockAccount implements Account {
         lock.lock();
         try {
             this.balance -= amount;
-        }finally {
+        } finally {
             lock.unlock();
         }
     }
 }
+
 class SynchonizeAccount implements Account {
     private int balance;
 
